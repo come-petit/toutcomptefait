@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tout Compte Fait, le livre de comptes du royaume</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='44' fill='%238c1d18'/><text x='50' y='64' font-size='42' text-anchor='middle' fill='%23e9c46a' font-family='serif'>A</text></svg>">
+<style>
+:root{--ink:#2b1b0e;--red:#7d1913;--gold:#a87a1f;--pa:#ecdcb0;--pb:#d9bd7e;--line:#8a6a3a;--serif:"Palatino Linotype","Book Antiqua",Palatino,"URW Palladio L","Iowan Old Style",Georgia,serif}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;color:var(--ink);font:17px/1.55 var(--serif);
+ background:radial-gradient(ellipse at 50% -10%,#5a3d27 0,#2a1b11 55%,#150d08 100%) fixed;padding:28px 14px 50px}
+.scroll{max-width:780px;margin:0 auto;position:relative;padding:34px 30px 30px;border-radius:10px;
+ background:radial-gradient(ellipse at 15% 8%,#f3e6c0,var(--pa) 45%,var(--pb) 100%);
+ box-shadow:inset 0 0 70px rgba(110,62,18,.5),inset 0 0 0 3px #b99552,inset 0 0 0 7px rgba(90,58,30,.35),0 24px 60px rgba(0,0,0,.65)}
+.seal{position:absolute;top:-18px;right:26px;width:74px;height:74px;border-radius:50%;display:grid;place-items:center;
+ background:radial-gradient(circle at 35% 30%,#b33a2c,var(--red) 60%,#4d0d09);color:#f0d68a;font:700 .82rem var(--serif);letter-spacing:.02em;
+ box-shadow:0 5px 10px rgba(0,0,0,.5),inset 0 0 0 4px rgba(0,0,0,.18),inset 0 0 0 6px rgba(240,214,138,.25);transform:rotate(-8deg)}
+h1{margin:0;font:700 clamp(2rem,7vw,3.1rem)/1.05 var(--serif);font-variant:small-caps;letter-spacing:.04em;color:var(--red);text-shadow:1px 1px 0 rgba(255,255,255,.35);padding-right:70px}
+.sub{margin:6px 0 24px;font-style:italic;color:#5c4222}
+h2{font:italic 700 1.25rem var(--serif);margin:26px 0 12px;padding-bottom:4px;border-bottom:2px solid var(--line);color:#4b2e12}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px 18px}
+label{display:block;font-size:.95rem;margin-bottom:3px;color:#4b3318}
+.inp{position:relative}
+.inp input{width:100%;font:1.3rem var(--serif);color:var(--ink);text-align:right;padding:8px 38px 8px 34px;
+ background:rgba(255,250,230,.55);border:1px solid var(--line);border-bottom-width:3px;border-radius:3px}
+.inp input:focus{outline:none;background:rgba(255,252,238,.9);border-color:var(--red)}
+.inp input::placeholder{color:#a58d63}
+.inp input[readonly]{background:rgba(120,80,30,.12);border-style:dashed}
+.inp .u{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:#6b4f27;pointer-events:none}
+.inp::before{content:"";position:absolute;left:10px;top:50%;width:14px;height:14px;margin-top:-7px;border-radius:50%;opacity:0;transition:opacity .2s;
+ background:radial-gradient(circle at 35% 30%,#b33a2c,var(--red) 70%);box-shadow:0 1px 2px rgba(0,0,0,.5)}
+.pin .inp::before{opacity:1}
+.hint{font-size:.85rem;color:#6b4f27;margin:3px 0 0;font-style:italic}
+.verdict{margin-top:26px;padding:14px 16px;border:2px solid var(--red);border-radius:4px;background:rgba(125,25,19,.08);font-style:italic;font-size:1.1rem;min-height:3.4em}
+.verdict.bad{background:rgba(125,25,19,.2)}
+.bar{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-top:18px}
+.key{font-size:.9rem;color:#5c4222;display:flex;gap:7px;align-items:center}
+.key i{width:13px;height:13px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#b33a2c,var(--red) 70%)}
+button{font:700 1rem var(--serif);color:#f0d68a;background:linear-gradient(#8f211a,#5e100c);border:2px solid #3b0907;border-radius:4px;padding:8px 16px;cursor:pointer;box-shadow:0 2px 0 #2a0604}
+button:active{transform:translateY(2px);box-shadow:none}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+footer{text-align:center;margin-top:22px;font-size:.85rem;font-style:italic;color:#6b4f27}
+@media(max-width:480px){.scroll{padding:30px 16px 24px}.seal{width:60px;height:60px;right:14px;font-size:.68rem}h1{padding-right:56px}}
+</style>
+</head>
+<body>
+<main class="scroll">
+  <div class="seal" aria-hidden="true">Absolut</div>
+  <h1>Tout Compte Fait</h1>
+  <p class="sub">Le livre de comptes du royaume de Logres. Modifiez n’importe quelle case, les autres se recalculent.</p>
+
+  <h2>L’achat</h2><div class="grid" id="g-achat"></div>
+  <h2>La vente</h2><div class="grid" id="g-vente"></div>
+  <h2>La marge</h2><div class="grid" id="g-marge"></div>
+
+  <div class="verdict" id="verdict" aria-live="polite"></div>
+  <div class="bar">
+    <span class="key"><i></i> Cases scellées : vos valeurs de départ, les autres en découlent.</span>
+    <button id="clear" type="button">Brûler les parchemins</button>
+  </div>
+  <footer>Hébergé au château, sur un mini PC qui ne dort jamais.</footer>
+</main>
+
+<script>
+/* Logique Apisoft :
+   prix de revient = prix d’achat + frais
+   prix de vente HT = prix de revient × coefficient = prix de revient ÷ (1 − marge %)
+   prix de vente TTC = HT × (1 + TVA)
+   marge % = marge ÷ prix de vente HT
+   Le prix d’achat et les frais sont la base ; la dernière case de vente ou de marge saisie est l’autre base. */
+const DEFAULT_COEF=1.42857; /* appliqué si seul le prix d’achat est saisi (= 30 % de marge) */
+const FIELDS=[
+ {k:'achat',g:'achat',l:'Prix d’achat HT',u:'€'},
+ {k:'frais',g:'achat',l:'Frais',u:'€'},
+ {k:'revient',g:'achat',l:'Prix de revient',u:'€',ro:1,h:'Achat + frais'},
+ {k:'coef',g:'vente',l:'Coefficient',u:'×',ph:'1,42857',h:'Prix de revient × coefficient = vente HT'},
+ {k:'ht',g:'vente',l:'Prix de vente HT',u:'€'},
+ {k:'ttc',g:'vente',l:'Prix de vente TTC',u:'€'},
+ {k:'rate',g:'vente',l:'Taux de TVA',u:'%'},
+ {k:'marge',g:'marge',l:'Marge',u:'€',h:'Vente HT moins prix de revient'},
+ {k:'pct',g:'marge',l:'Marge (%)',u:'%',h:'Marge ÷ prix de vente HT'}];
+const $=id=>document.getElementById(id), el={}, wrap={};
+const st={achat:NaN,frais:NaN,drv:null,rate:20};
+FIELDS.forEach(f=>{
+  const d=document.createElement('div');
+  d.innerHTML=`<label for="i-${f.k}">${f.l}</label><div class="inp"><input id="i-${f.k}" type="text" inputmode="decimal" autocomplete="off" placeholder="${f.ph||'0,00'}"${f.ro?' readonly tabindex="-1"':''}><span class="u">${f.u}</span></div>${f.h?`<p class="hint">${f.h}</p>`:''}`;
+  $('g-'+f.g).appendChild(d);
+  el[f.k]=d.querySelector('input');wrap[f.k]=d;
+  if(!f.ro){
+    el[f.k].addEventListener('input',()=>onEdit(f.k));
+    el[f.k].addEventListener('blur',()=>{
+      if(f.k==='rate'&&el.rate.value.trim()===''){el.rate.value='20';st.rate=20}
+      render();
+    });
+  }
+});
+el.rate.value='20';
+
+const parse=s=>{s=s.replace(/\s/g,'').replace(',','.');return s===''||s==='-'?NaN:Number(s)};
+const fmt=n=>(Math.round(n*100)/100).toFixed(2).replace('.',',');
+const fmtc=n=>(Math.round(n*1e5)/1e5).toFixed(5).replace('.',',');
+
+function onEdit(k){
+  const v=parse(el[k].value);
+  if(k==='achat')st.achat=v;
+  else if(k==='frais')st.frais=v;
+  else if(k==='rate')st.rate=isNaN(v)?0:v;
+  else st.drv=isNaN(v)?null:{k,v};
+  render(k);
+}
+function compute(){
+  const t=st.rate/100,R=st.achat+(isNaN(st.frais)?0:st.frais);
+  const d=st.drv||{k:'defaut',v:DEFAULT_COEF};let V=NaN;
+  switch(d.k){
+    case 'coef':
+    case 'defaut':V=R*d.v;break;
+    case 'pct':V=d.v<100?R/(1-d.v/100):NaN;break;
+    case 'marge':V=R+d.v;break;
+    case 'ht':V=d.v;break;
+    case 'ttc':V=d.v/(1+t);break;}
+  const m=V-R;
+  return {revient:R,coef:V/R,ht:V,ttc:V*(1+t),marge:m,pct:m/V*100,isDefault:!st.drv};
+}
+function render(active){
+  const o=compute();
+  FIELDS.forEach(f=>{
+    const k=f.k;
+    const pinned=k==='achat'?!isNaN(st.achat):k==='frais'?!isNaN(st.frais):(st.drv&&st.drv.k===k);
+    wrap[k].classList.toggle('pin',!!pinned);
+    if(k==='achat'||k==='frais'||k==='rate'||k===active||(pinned&&!f.ro))return;
+    el[k].value=isFinite(o[k])?(k==='coef'?fmtc(o[k]):fmt(o[k])):'';
+  });
+  const vd=$('verdict');vd.classList.remove('bad');
+  if(!isFinite(o.marge)){vd.textContent='Les parchemins attendent vos chiffres. Inscrivez le prix d’achat, puis n’importe quelle autre case.';return}
+  if(o.marge<-0.004){vd.classList.add('bad');vd.textContent=`Vous vendez à perte, Sire : ${fmt(o.marge)} € par pièce. Les caisses du royaume ne tiendront pas.`}
+  else if(Math.abs(o.marge)<=0.004)vd.textContent='Vous vendez au prix coûtant. Le roi appelle ça de la charité.';
+  else if(o.isDefault)vd.textContent=`Sans autre consigne, le royaume applique le coefficient ${fmtc(DEFAULT_COEF)} (30 % de marge sur le prix de vente HT) : ${fmt(o.marge)} € par pièce. Modifiez une case de vente ou la marge pour changer ça.`;
+  else vd.textContent=`Marge de ${fmt(o.marge)} € sur ${fmt(o.revient)} € de prix de revient${isFinite(o.pct)?`, soit ${fmt(o.pct)} % du prix de vente HT`:''}. Coefficient TTC : ${fmtc(o.coef*(1+st.rate/100))}. C’est pas faux.`;
+}
+$('clear').onclick=()=>{st.achat=NaN;st.frais=NaN;st.drv=null;st.rate=20;FIELDS.forEach(f=>el[f.k].value='');el.rate.value='20';render();el.achat.focus()};
+render();
+</script>
+</body>
+</html>
